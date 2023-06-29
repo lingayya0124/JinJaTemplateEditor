@@ -1,0 +1,32 @@
+tiptap--jinja--variable::before {
+  content: "{{";
+  margin-right: 5px;
+  color: red;
+}
+
+tiptap--jinja--variable::after {
+  content: "}}";
+  margin-left: 5px;
+
+  color: red;
+}
+tiptap--jinja--variable {
+  color: green;
+  font-weight: 700;
+}
+tiptap--jinja--comment::before {
+  content: "{#";
+  margin-right: 5px;
+  color: #361105;
+}
+
+tiptap--jinja--comment::after {
+  content: "#}";
+  margin-left: 5px;
+
+  color: #361105;
+}
+tiptap--jinja--comment {
+  color: gray;
+  font-weight: 700;
+}
