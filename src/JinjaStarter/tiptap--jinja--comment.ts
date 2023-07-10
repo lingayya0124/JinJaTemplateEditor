@@ -1,17 +1,17 @@
 import {
   ReactNodeViewRenderer,
   NodeViewWrapper,
-  NodeViewContent
+  NodeViewContent,
 } from "@tiptap/react";
 import {
   Mark,
   markInputRule,
   markPasteRule,
   mergeAttributes,
-  Node
+  Node,
 } from "@tiptap/core";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
-export interface BoldOptions {
+export interface JinjaCommentOptions {
   HTMLAttributes: Record<string, any>;
 }
 // import Component from "./Component";
@@ -40,8 +40,12 @@ export const starPasteRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/g;
 export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/;
 export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))/g;
 
-export const tiptapJinjaComment = Mark.create<BoldOptions>({
+export const tiptapJinjaComment = Mark.create<JinjaCommentOptions>({
   name: "tiptap--jinja--comment",
+  group: "block",
+
+  // spanning: true,
+  // exitable: false,
   // onUpdate() {
   //   console.log(this.editor);
   // },
@@ -50,7 +54,7 @@ export const tiptapJinjaComment = Mark.create<BoldOptions>({
   // },
   addStorage() {
     return {
-      values: ["sfsf"]
+      values: ["sfsf"],
     };
   },
   // onSelectionUpdate() {
@@ -86,7 +90,7 @@ export const tiptapJinjaComment = Mark.create<BoldOptions>({
   // },
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
 
@@ -118,54 +122,69 @@ export const tiptapJinjaComment = Mark.create<BoldOptions>({
   parseHTML() {
     return [
       {
-        tag: "tiptap--jinja--comment"
-      }
+        tag: "tiptap--jinja--comment",
+        preserveWhitespace: "full",
+      },
     ];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ mark, HTMLAttributes }) {
     return [
       "tiptap--jinja--comment",
+      // ["p", 0]
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        "data-type": this.name
-      })
+        "data-type": this.name,
+      }),
+      [
+        "text",
+        // {
+        //   class: mark.attrs.language
+        //     ? this.options.languageClassPrefix + mark.attrs.language
+        //     : null
+        // },
+        0,
+      ],
     ];
   },
 
   addCommands() {
     return {
-      setBold: () => ({ commands }) => {
-        console.log(this.options);
+      setBold:
+        () =>
+        ({ commands }) => {
+          console.log(this.options);
 
-        return commands.setMark(this.name);
-      },
-      toggleBold: () => ({ commands }) => {
-        console.log(this.options);
-        return commands.toggleMark(this.name);
-      },
-      unsetBold: () => ({ commands }) => {
-        return commands.unsetMark(this.name);
-      }
+          return commands.setMark(this.name);
+        },
+      toggleBold:
+        () =>
+        ({ commands }) => {
+          console.log(this.editor);
+          return commands.toggleMark(this.name);
+        },
+      unsetBold:
+        () =>
+        ({ commands }) => {
+          return commands.unsetMark(this.name);
+        },
     };
   },
 
   addKeyboardShortcuts() {
     return {
-      "Mod-b": () => this.editor.commands.toggleBold(),
-      "Mod-B": () => this.editor.commands.toggleBold()
+      // Enter: () => this.editor.commands.setHardBreak()
     };
   },
-
   addInputRules() {
     return [
       markInputRule({
         find: starInputRegex,
-        type: this.type
+        type: this.type,
       }),
       markInputRule({
         find: underscoreInputRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
   },
 
@@ -173,12 +192,12 @@ export const tiptapJinjaComment = Mark.create<BoldOptions>({
     return [
       markPasteRule({
         find: starPasteRegex,
-        type: this.type
+        type: this.type,
       }),
       markPasteRule({
         find: underscorePasteRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
-  }
+  },
 });
